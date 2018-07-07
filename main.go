@@ -10,8 +10,11 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// データ型の宣言
 type User struct {
-	Name string `json:"name"`
+	Id         int    `json:id`
+	Name       string `json:"name"`
+	Twitter_id string `json:"twitter_id"`
 }
 
 func main() {
@@ -38,7 +41,7 @@ func main() {
 	}
 
 	// deferは遅延実行を意味する。クエリを実行後にDBから切断
-	defer create.Close()
+	defer db.Close()
 	*/
 
 	/* レコードの作成
@@ -49,12 +52,12 @@ func main() {
 		panic(err.Error())
 	}
 
-	defer insert.Close()
+	defer db.Close()
 
 	fmt.Println("userテーブルへの登録に成功しました")
 	*/
 
-	results, err := db.Query("SELECT name FROM users")
+	results, err := db.Query("SELECT id, name, twitter_id FROM users")
 
 	// nilの場合にpanicでエラーを発生させる
 	if err != nil {
@@ -64,12 +67,14 @@ func main() {
 	for results.Next() {
 		var user User
 
-		err = results.Scan(&user.Name)
+		err = results.Scan(&user.Id, &user.Name, &user.Twitter_id)
 		// nilの場合にpanicでエラーを発生させる
 		if err != nil {
 			panic(err.Error())
 		}
 
+		fmt.Println(user.Id)
 		fmt.Println(user.Name)
+		fmt.Println(user.Twitter_id)
 	}
 }
